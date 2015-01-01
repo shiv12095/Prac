@@ -52,3 +52,12 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Django Specific :
+# http://jasonkotenko.com/posts/using-git-django-github/
+
+*.pyc 
+settings.py 
+*.json 
+*~ 
+media/temp 
