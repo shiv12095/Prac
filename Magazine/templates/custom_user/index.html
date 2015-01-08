@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title> Magazine </title>
+	</head>
+
+	<body>
+		<H1>Index Page</H1>
+		{% if user.is_authenticated %}
+			<a href = "logout"><button type = "button">Log Out</button></a>
+		{% else %}
+			<a href = ""><button type = "button">Home</button></a>
+		{% endif %}
+	</body>
+</html>

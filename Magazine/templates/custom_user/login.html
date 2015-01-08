@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title> Magazine </title>
+	</head>
+
+	<body>
+		<h1>Home</h1>
+		{% if user.is_authenticated %}
+			{{ user.email }}<P>
+			{{ user.first_name }}<P>
+			<a href = "logout"><button type = "button">Logout</button></a>			
+		{% else %}
+			<form id = "login_form" method = "post" action = "/custom_user/login">
+			{% csrf_token %}
+			{% for field in form.visible_fields %}
+				{{ field.label }}
+				{{ field }}
+				<p>
+			{% endfor %}
+			{% for field in form.visible_fields %}
+				{{ field.errors }}
+				<p>
+			{% endfor %}
+
+			<input type = "submit" name = "submit" value = "Login"/>
+			<a href = "signup"><button type = "button">Sign Up</button></a>
+
+			</form>
+		{% endif %}
+	</body>
+</html>
