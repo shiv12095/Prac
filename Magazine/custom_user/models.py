@@ -27,11 +27,10 @@ class AuthUserManager(BaseUserManager):
 
 
 class AuthUser(AbstractBaseUser, PermissionsMixin):
-	GENDER_CHOICES=(('M','Male'),('F','Female'))
 	email = models.EmailField(verbose_name='email address' , unique=True, max_length=255)
 	first_name = models.CharField(max_length=30, null=False, blank=False)
 	last_name = models.CharField(max_length=30, null=False, blank=False)
-	gender = models.CharField(max_length=1, null=False, blank=False, choices=GENDER_CHOICES)
+	gender = models.CharField(max_length=1, null=False, blank=False)
 	date_of_birth = models.DateField(null=True, default=None)
 	date_joined = models.DateField(null=True, default=None)
 	is_active = models.BooleanField(default=True, null=False)

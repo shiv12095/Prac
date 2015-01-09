@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login as django_login, logout as django_logout , authenticate
 from django.contrib.auth.decorators import login_required
 from custom_user.backends import AuthUserBackend
@@ -12,7 +11,7 @@ def index(request):
 def signup(request):
 	if request.method == 'POST':
 		form = AuthUserCreationForm(request.POST)
-		print("form object created")
+		#print("form object created")
 		if form.is_valid():
 			form.save(commit=True)			
 			return redirect('login')
@@ -35,8 +34,7 @@ def login(request):
 				print("user absent")
 	else:
 		form = AuthUserAuthenticationForm()
-	return render(request, 'custom_user/login.html', {'form': form , 'user': request.user})
-
+	return render(request, 'custom_user/login.html', {'form': form})
 def logout(request):
 	print("logout")
 	print(request.user)

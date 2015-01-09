@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title> Magazine </title>
+	</head>
+
+	<body>
+		<H1>Expiring Subscriptions</H1>
+		{% if expiring_subscriptions %}
+			{% for subscription in expiring_subscriptions %}
+				<a href = "view/{{ subscription.subscription_id }}">{{ subscription.subscription_id }}</a> {{ subscription.subscriber_name }} {{ subscription.magazine_name }}
+			{% endfor %}
+		{% endif %}
+	</body>
+</html>

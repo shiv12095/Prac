@@ -6,4 +6,5 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^custom_user/', include('custom_user.urls')),
+    url(r'^subscriptions/', include('subscriptions.urls')),    
 )

@@ -39,7 +39,6 @@ class AuthUserCreationForm(forms.ModelForm):
 
 class AuthUserChangeForm(forms.ModelForm):
 	password = ReadOnlyPasswordHashField()
-
 	class Meta:
 		model = AuthUser
 		fields = ('email' , 'first_name' , 'last_name' , 'date_of_birth' , 'is_active')
@@ -55,9 +54,9 @@ class AuthUserAuthenticationForm(forms.Form):
 		fields = ['email' , 'password']
 	
 	def clean_email(self):
-		print(self)
 		try:
 			user = AuthUser.objects.get(email=self.cleaned_data.get("email"))
 		except AuthUser.DoesNotExist:
+			print("user absent clean")
 			raise forms.ValidationError("Invalid Email Id or Password")
 		return self.cleaned_data.get("email")
