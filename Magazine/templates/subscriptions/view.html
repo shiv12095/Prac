@@ -7,22 +7,43 @@
 
 	<body>
 		<a href = "/subscriptions"><button type = "button">Home</button></a>
-		<H2>Subscription Id: {{ subscription.subscription_id }}</H2>
+
+		{% if subscription.cancelled %}
+			<Font color="Red"><H2>Subscription Id: {{ subscription.subscription_id }}(Cancelled)</H2></Font>
+		{% else %}
+			<H2>Subscription Id: {{ subscription.subscription_id }}</H2>
+		{% endif %}
+
 			<B>Name:</B> {{ subscription.subscriber_name }}<br>
 			<B>Mobile Number:</B> {{ subscription.subscriber_mobile_number }}<br>
 			<B>Address:</B> {{ subscription.subscriber_address }}<br>
 			<P><P>
 			<B>Magazine:</B> {{ subscription.magazine_name }}<br>
+			<B>Subscription Amount:</B> {{ subscription.amount }}<br>
 			<B>Subscription Period:</B> {{ subscription.subscription_start_date }} to {{ subscription.subscription_end_date }}<br>
+
+		{% if subscription.cancelled %}
+
+		{% else %}
 			{% if subscription_expiring == "expiring" %}
 				<Font color="Blue">Subscription Expiring</Font><br>	
 			{% endif %}
 			{% if subscription_expiring == "expired" %}
 				<Font color="Red">Subscription Expired</Font><br>	
 			{% endif %}
+		{% endif %}
+
 			<P><P>
-			<B>Subscription created by:</B> {{ user.get_full_name }}
+			<B>Subscription created by:</B> {{ subscription.user_id.get_full_name }}
 			<P><P>
-		<a href = "/subscriptions/cancel"><button type = "button">Home</button></a>
+
+		{% if subscription.cancelled %}
+
+		{% else %}
+
+			<a href = "/subscriptions/edit/{{ subscription.subscription_id }}"><button type = "button">Edit Subscription</button></a>		
+			<a href = "/subscriptions/cancel/{{ subscription.subscription_id }}"><button type = "button">Cancel Subscription</button></a>
+
+		{% endif %}
 	</body>
 </html>

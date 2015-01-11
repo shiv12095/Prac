@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title> Magazine </title>
+	</head>
+
+	<body>
+		<a href = "/subscriptions"><button type = "button">Home</button></a>
+		<H2>Subscription Id: {{ subscription_id }}</H2>
+
+		<form id = "subscription_form" method = "post" action = "/subscriptions/edit/{{ subscription_id }}/">
+
+		{% csrf_token %}
+		{% for field in form.visible_fields %}
+			{{ field.label }} {{ field }} {{ field.errors }}
+			<p>
+		{% endfor %}
+
+		<input type = "submit" name = "submit" value = "Update Subscription"/>
+		</form>
+	</body>
+</html>

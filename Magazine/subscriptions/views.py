@@ -36,6 +36,44 @@ def subscription_expiring(subscription):
 		return "valid"
 
 @login_required
+def edit(request, subscription_id):
+	context_dict={}
+	try:
+		instance = MagazineSubscription.objects.get(subscription_id=subscription_id)
+		form = MagazineSubscriptionForm(instance=instance)
+		context_dict["form"] =  form
+		context_dict["subscription_id"] = instance.subscription_id
+		#print instance.subscription_id
+		if request.method == 'GET':
+			return render(request, 'subscriptions/edit.html', context_dict)
+		else:
+			form = MagazineSubscriptionForm(data=request.POST, instance=instance)
+			if form.is_valid():				
+				subscription = form.save(commit=False)
+				user = request.user
+				subscription.user_id = user	#last modified by
+				#print subscription.subscription_id
+				subscription.subscription_id = instance.subscription_id
+				subscription.save()
+				return redirect('view', subscription_id=subscription_id)
+			else:
+				context_dict["form"] = form
+				return render(request , 'subscriptions/edit.html' , context_dict)
+	except MagazineSubscription.DoesNotExist:
+		return redirect('index')
+
+@login_required
+def cancel(request, subscription_id):
+	context_dict={}	
+	try:
+		subscription = MagazineSubscription.objects.get(subscription_id=subscription_id)
+		subscription.cancelled = True
+		subscription.save()
+	except MagazineSubscription.DoesNotExist:
+		return redirect('index')
+	return redirect('view', subscription_id=subscription_id)
+
+@login_required
 def expiring(request):
 	expiry_date = date.today() + timedelta(days=8)	#1 week notice before expiry
 	try:
@@ -46,6 +84,15 @@ def expiring(request):
 		return render(request, 'subscriptions/expiring.html')
 
 @login_required
+def cancelled(request):
+	try:
+		cancelled_subscriptions = MagazineSubscription.objects.filter(cancelled=True)
+		print cancelled_subscriptions
+		return render(request, 'subscriptions/cancelled.html', {'cancelled_subscriptions':cancelled_subscriptions})
+	except MagazineSubscription.DoesNotExist:
+		return render(request, 'subscriptions/cancelled.html')
+
+@login_required
 def new(request):
 	if(request.method=='POST'):
 		form = MagazineSubscriptionForm(request.POST)
@@ -54,10 +101,11 @@ def new(request):
 			subscription = form.save(commit=False)
 			subscription.user_id = user
 			subscription_id = generate_subscription_id(request)
-			subscription.subscriber_address = get_address(request)
 			subscription.subscription_id = subscription_id
-			subscription.subscriber_state = request.POST["subscriber_state"]
-			subscription.subscriber_pincode = request.POST["subscriber_pincode"]
+			subscription.subscriber_address = get_address(request)
+			subscription.cancelled = False
+			# subscription.subscriber_state = request.POST["subscriber_state"]
+			# subscription.subscriber_pincode = request.POST["subscriber_pincode"]
 			subscription.save()
 			return redirect(view, subscription_id=subscription_id)
 		else:
@@ -67,8 +115,8 @@ def new(request):
 	return render(request, 'subscriptions/new.html' , {'form': form})
 
 def get_address(request):
-	address = request.POST["subscriber_address"] + " " + request.POST["subscriber_address_1"] + " " + request.POST["subscriber_address_2"] + " " + get_state(request) + " " + request.POST["subscriber_pincode"]
-	return address
+ 	address = request.POST["subscriber_address"] + " " + get_state(request) + " " + request.POST["subscriber_pincode"]
+ 	return address
 
 def generate_subscription_id(request):
 	state_code = request.POST["subscriber_state"]
