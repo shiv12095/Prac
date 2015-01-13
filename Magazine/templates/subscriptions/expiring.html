@@ -6,12 +6,26 @@
 	</head>
 
 	<body>
-		<a href = "/subscriptions"><button type = "button">Home</button></a>	
+		<a href = "/subscriptions"><button type = "button">Home</button></a>
 		<H1>Expiring Subscriptions</H1>
+		<form id = "expiring_subscriptions_form" method = "post" action = "/subscriptions/expiring">
+
+			{% csrf_token %}
+			{% for field in form.visible_fields %}
+				{{ field.label }}
+				{{ field }}
+				<P>
+			{% endfor %}
+
+		<input type = "submit" name = "submit" value = "Search"/>
+		</form>
+
 		{% if expiring_subscriptions %}
+		<Font color="Red">The magazines with expiry date as {{ expiry_date }} are: <P></Font>
 			{% for subscription in expiring_subscriptions %}
 				<a href = "view/{{ subscription.subscription_id }}">{{ subscription.subscription_id }}</a> {{ subscription.subscriber_name }} {{ subscription.magazine_name }}<P>
 			{% endfor %}
 		{% endif %}
+
 	</body>
 </html>

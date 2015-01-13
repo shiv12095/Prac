@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from subscriptions.forms import MagazineSubscriptionForm
+from subscriptions.forms import MagazineSubscriptionForm, ExpiringMagazineSubscriptionForm
 from subscriptions.models import MagazineSubscription
 from datetime import date, timedelta
 
@@ -73,15 +73,34 @@ def cancel(request, subscription_id):
 		return redirect('index')
 	return redirect('view', subscription_id=subscription_id)
 
+# @login_required
+# def expiring(request):
+# 	expiry_date = date.today() + timedelta(days=8)	#1 week notice before expiry
+# 	try:
+# 		expiring_subscriptions = MagazineSubscription.objects.filter(subscription_end_date__lt=expiry_date,cancelled=False)
+# 		#print expiring_subscriptions
+# 		return render(request, 'subscriptions/expiring.html', {'expiring_subscriptions':expiring_subscriptions})
+# 	except MagazineSubscription.DoesNotExist:
+# 		return render(request, 'subscriptions/expiring.html')
+
 @login_required
 def expiring(request):
-	expiry_date = date.today() + timedelta(days=8)	#1 week notice before expiry
-	try:
-		expiring_subscriptions = MagazineSubscription.objects.filter(subscription_end_date__lt=expiry_date)
-		#print expiring_subscriptions
-		return render(request, 'subscriptions/expiring.html', {'expiring_subscriptions':expiring_subscriptions})
-	except MagazineSubscription.DoesNotExist:
-		return render(request, 'subscriptions/expiring.html')
+	form = ExpiringMagazineSubscriptionForm()
+	if request.method == 'POST':
+		expiry_date = date(int(request.POST["subscription_end_date_year"]), int(request.POST["subscription_end_date_month"]), int(request.POST["subscription_end_date_day"]))
+		try:
+			form = ExpiringMagazineSubscriptionForm(request.POST)
+			expiring_subscriptions = MagazineSubscription.objects.filter(subscription_end_date__lt=expiry_date,cancelled=False,magazine_name=request.POST["magazine_name"])
+			print expiry_date
+			return render(request, 'subscriptions/expiring.html', {'expiring_subscriptions':expiring_subscriptions, 'form': form , 'expiry_date': expiry_date})
+		except MagazineSubscription.DoesNotExist:
+			return render(request, 'subscriptions/expiring.html')
+	else:
+		return render(request, 'subscriptions/expiring.html' , {"form": form})
+
+def subs(request):
+	print request.POST['subscription_end_date']
+	return request.POST['subscription_end_date']
 
 @login_required
 def cancelled(request):

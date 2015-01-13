@@ -35,6 +35,7 @@ def login(request):
 	else:
 		form = AuthUserAuthenticationForm()
 	return render(request, 'custom_user/login.html', {'form': form})
+
 def logout(request):
 	print("logout")
 	print(request.user)

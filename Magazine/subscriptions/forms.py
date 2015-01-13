@@ -65,3 +65,12 @@ class MagazineSubscriptionForm(forms.ModelForm):
 			raise forms.ValidationError("Invalid Subscription Dates")
 		else:
 			return self.cleaned_data.get("subscription_end_date")
+
+class ExpiringMagazineSubscriptionForm(forms.Form):
+	MAGAZINE_CHOICES = (('People\'s Demococracy' ,'People\'s Democracy'), ('India Today' , 'India Today'))
+
+	magazine_name = forms.ChoiceField(label="Magazine", choices=MAGAZINE_CHOICES)
+	subscription_end_date = forms.DateField(label="Subscription end date", widget=SelectDateWidget)
+
+	class Meta:
+		fields = ['magazine_name' , 'subscription_end_date']
